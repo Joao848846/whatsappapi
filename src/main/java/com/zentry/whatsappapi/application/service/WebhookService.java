@@ -1,4 +1,4 @@
-package com.zentry.whatsappapi.service;
+package com.zentry.whatsappapi.application.service;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

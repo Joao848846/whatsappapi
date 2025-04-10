@@ -1,6 +1,6 @@
-package com.zentry.whatsappapi.controller;
+package com.zentry.whatsappapi.adapter.in.controller.message;
 
-import com.zentry.whatsappapi.service.MessageService;
+import com.zentry.whatsappapi.application.service.MessageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

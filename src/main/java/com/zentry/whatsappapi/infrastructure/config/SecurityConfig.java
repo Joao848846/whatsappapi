@@ -1,4 +1,4 @@
-package com.zentry.whatsappapi.config;
+package com.zentry.whatsappapi.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

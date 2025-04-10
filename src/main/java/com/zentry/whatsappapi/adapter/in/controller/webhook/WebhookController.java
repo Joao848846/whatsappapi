@@ -1,6 +1,6 @@
-package com.zentry.whatsappapi.controller;
+package com.zentry.whatsappapi.adapter.in.controller.webhook;
 
-import com.zentry.whatsappapi.service.WebhookService;
+import com.zentry.whatsappapi.application.service.WebhookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
