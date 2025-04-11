@@ -1,6 +1,7 @@
 package com.zentry.whatsappapi.adapter.in.controller.webhook;
 
-import com.zentry.whatsappapi.application.service.WebhookService;
+import com.zentry.whatsappapi.adapter.in.controller.webhook.dto.WebhookPayloadDTO;
+import com.zentry.whatsappapi.application.service.webhook.WebhookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,17 +19,10 @@ public class WebhookController {
 
     // Endpoint para receber as notificações do webhook (POST)
     @PostMapping
-    public ResponseEntity<String> receiveWebhook(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> receiveWebhook(@RequestBody WebhookPayloadDTO payload) {
         System.out.println("Payload recebido: " + payload); // 👈 Debug pra ver o que chega
-        webhookService.processWebhook(payload.toString());
+        webhookService.processWebhook(payload);
         return ResponseEntity.ok("Webhook recebido com sucesso!");
     }
 
-    // Endpoint para verificação do webhook (GET)
-    //@GetMapping
-   // public ResponseEntity<String> verifyWebhook(@RequestParam(name = "hub.mode", required = false) String mode,
-                                              //  @RequestParam(name = "hub.verify_token", required = false) String token,
-                                                //RequestParam(name = "hub.challenge", required = false) String challenge) {
-       // return webhookService.verifyWebhook(mode, token, challenge);
-    //}
 }

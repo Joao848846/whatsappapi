@@ -1,8 +1,11 @@
 package com.zentry.whatsappapi.adapter.in.controller.instance;
 
-import com.zentry.whatsappapi.application.service.ConnectionService;
+import com.zentry.whatsappapi.application.service.connection.ConnectionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.Map;
 
 @RestController
@@ -10,6 +13,10 @@ import java.util.Map;
 public class ConnectionController {
 
     private final ConnectionService connectionService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
 
     public ConnectionController(ConnectionService connectionService) {
         this.connectionService = connectionService;
@@ -33,14 +40,17 @@ public class ConnectionController {
 
         try {
             String response = connectionService.createInstance(number, Boolean.valueOf(qrcode ? "true" : "false"), instanceName, integration, webhookUrl, chain);
+            Map<String, Object> responseMap = objectMapper.readValue(response, new TypeReference<Map<String, Object>>() {});
+
             return ResponseEntity.ok().body(Map.of(
                     "message", "Instância criada com sucesso!",
-                    "data", response
+                    "data", responseMap
             ));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of(
                     "error", e.getMessage()
             ));
         }
+
     }
 }
