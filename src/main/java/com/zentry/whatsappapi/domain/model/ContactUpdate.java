@@ -3,9 +3,23 @@ package com.zentry.whatsappapi.domain.model;
 import org.springframework.data.annotation.Id;
 import  org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Objects;
+
 @Document(collection = "contact_updates")
 
 public class ContactUpdate {
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ContactUpdate that = (ContactUpdate) o;
+        return Objects.equals(profilePicUrl, that.profilePicUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(profilePicUrl);
+    }
 
     @Id
     private String id; // O ID do documento no MongoDB
