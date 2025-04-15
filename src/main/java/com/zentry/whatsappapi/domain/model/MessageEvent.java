@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
-@Document(collection = "message_events") // Nova collection unificada
+@Document(collection = " message_events") // Nova collection unificada
 public class MessageEvent {
 
     @Id

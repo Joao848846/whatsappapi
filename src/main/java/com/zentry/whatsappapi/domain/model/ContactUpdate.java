@@ -1,30 +1,20 @@
 package com.zentry.whatsappapi.domain.model;
 
 import org.springframework.data.annotation.Id;
-import  org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
 @Document(collection = "contact_updates")
-
 public class ContactUpdate {
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        ContactUpdate that = (ContactUpdate) o;
-        return Objects.equals(profilePicUrl, that.profilePicUrl);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(profilePicUrl);
-    }
 
     @Id
     private String id; // O ID do documento no MongoDB
 
+    @Indexed(unique = true) // Garantir que o remoteJid seja único na coleção
     private String remoteJid;
+
     private String profilePicUrl;
     private String instanceId; // Podemos incluir o instanceId também, se útil
 
@@ -62,6 +52,18 @@ public class ContactUpdate {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ContactUpdate that = (ContactUpdate) o;
+        return Objects.equals(profilePicUrl, that.profilePicUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(profilePicUrl);
+    }
+
+    @Override
     public String toString() {
         return "ContactUpdate{" +
                 "id='" + id + '\'' +
@@ -70,5 +72,4 @@ public class ContactUpdate {
                 ", instanceId='" + instanceId + '\'' +
                 '}';
     }
-
 }

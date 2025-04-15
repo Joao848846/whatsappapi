@@ -74,7 +74,11 @@ public class WebhookService {
                     messageToSave.setMessageId((String) key.get("id"));
                     if (key.containsKey("participant")) {
                         messageToSave.setSender((String) key.get("participant"));
-                    } else {
+                    } else if (payload.getSender() != null) {
+                        messageToSave.setSender(payload.getSender());
+                    } else if (messageToSave.isFromMe()) {
+                        messageToSave.setSender(messageToSave.getRemoteJid());
+                    }else {
                         messageToSave.setSender(messageToSave.getRemoteJid());
                     }
 

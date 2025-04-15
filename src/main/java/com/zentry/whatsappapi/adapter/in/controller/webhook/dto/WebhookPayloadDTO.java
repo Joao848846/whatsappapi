@@ -8,6 +8,7 @@ public class WebhookPayloadDTO {
 
     private String event;
     private String instance;
+    private String sender;
     private Map<String, Object> data;
 
 
