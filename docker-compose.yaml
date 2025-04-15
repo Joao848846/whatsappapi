@@ -15,6 +15,8 @@ services:
       - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - zap
 
   redis:
     image: redis:latest
@@ -25,6 +27,10 @@ services:
       - evolution_redis:/data
     ports:
       - "6379:6379"
+    networks:
+      - zap
+
+
   evolution-api:
     container_name: evolution_api
     image: atendai/evolution-api:v2.1.1
@@ -38,8 +44,33 @@ services:
       - .env
     volumes:
       - evolution_instances:/evolution/instances
+    networks:
+      - zap
+
+
+  zentry-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zentry
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+    environment:
+      - JAVA_OPTS=
+    networks:
+      - zap
+
 
 volumes:
   evolution_instances:
   evolution_redis:
   postgres_data:
+
+networks:
+  zap:
+    driver: bridge
