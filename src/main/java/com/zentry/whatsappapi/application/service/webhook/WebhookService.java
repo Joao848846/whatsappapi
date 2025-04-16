@@ -83,7 +83,7 @@ public class WebhookService {
                     }
 
                     // Definindo a direção da mensagem
-                    if (messageToSave.isFromMe()) {
+                     if (messageToSave.isFromMe()) {
                         direction = "OUT"; // Se for enviado por nós, a direção é "OUT"
                     }
                 }

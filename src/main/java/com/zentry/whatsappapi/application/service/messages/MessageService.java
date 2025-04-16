@@ -1,5 +1,7 @@
 package com.zentry.whatsappapi.application.service.messages;
 
+
+
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,7 +15,7 @@ import java.util.Map;
 @Service
 public class MessageService {
 
-    private static final String API_URL = "http://localhost:8080/";
+    private static final String API_URL = "http://evolution-api:8080/";
     private static final String API_KEY = "12345";
 
 
@@ -41,10 +43,11 @@ public class MessageService {
             System.out.println("Resposta da API: " + response.getBody());
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> responseMap = mapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+
             return responseMap;
         } catch (Exception e) {
             System.err.println("Erro ao enviar mensagem: " + e.getMessage());
-            throw new RuntimeException("Erro ao enviar mensagem", e);
+            throw new RuntimeException(e);
         }
     }
 
