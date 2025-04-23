@@ -28,6 +28,9 @@ public class Users {
     private String telefone;
     @Setter
     @Getter
+    private String tipo;
+    @Getter
+    @Setter
     private String senha;
     @Setter
     @Getter
@@ -35,12 +38,12 @@ public class Users {
     @Setter
     @Getter
     private Boolean ativo;
-    private List<String> modulosHabilitados;
+    private List<String> modos;
 
 
     public Users() {}
 
-    public Users(String id, String nome, String nascimento, String email, String telefone, String senha, String cpf, Boolean ativo) {
+    public Users(String id, String nome, String nascimento, String email, String telefone, String senha, String cpf, Boolean ativo, List<String> modos, String tipo) {
         this.id = id;
         this.nome = nome;
         this.nascimento = nascimento;
@@ -49,6 +52,11 @@ public class Users {
         this.senha = senha;
         this.cpf = cpf;
         this.ativo = ativo;
+        this.modos = modos;
+        this.tipo = tipo;
     }
 
+    public List<String> getModos() {
+        return modos;
+    }
 }

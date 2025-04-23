@@ -25,7 +25,9 @@ public class UsersService {
                     usersDTO.getTelefone(),
                     usersDTO.getSenha(),
                     usersDTO.getCpf(),
-                    usersDTO.getAtivo()
+                    usersDTO.getAtivo(),
+                    usersDTO.getModos(),
+                    usersDTO.getTipo()
 
             );
             Users usuarioCriado = usersRepository.save(usuario);
@@ -37,7 +39,10 @@ public class UsersService {
                     usuarioCriado.getTelefone(),
                     usuarioCriado.getSenha(),
                     usuarioCriado.getCpf(),
-                    usuarioCriado.getAtivo()
+                    usuarioCriado.getAtivo(),
+                    usuarioCriado.getModos(),
+                    usuarioCriado.getTipo()
+
             );
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Erro ao criar usuário: " + e.getMessage());

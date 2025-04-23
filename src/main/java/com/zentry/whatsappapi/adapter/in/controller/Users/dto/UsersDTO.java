@@ -1,5 +1,6 @@
 package com.zentry.whatsappapi.adapter.in.controller.Users.dto;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,22 +22,28 @@ public class UsersDTO {
     private String email;
     @Setter
     @Getter
+    @Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter apenas números e ter entre 10 a 11 dígitos.")
     private String telefone;
     @Getter
     @Setter
     private String senha;
     @Getter
     @Setter
+    private String tipo;
+    @Getter
+    @Setter
     private String cpf;
     @Getter
     @Setter
     private Boolean ativo;
-    private List<String> modulosHabilitados;
+    @Getter
+    @Setter
+    private List<String> modos;
 
 
     public UsersDTO() {}
 
-    public UsersDTO(String id, String nome, String nascimento, String email, String telefone, String senha, String cpf, Boolean ativo) {
+    public UsersDTO(String id, String nome, String nascimento, String email, String telefone, String senha, String cpf, Boolean ativo, List<String> modos, String tipo) {
         this.id = id;
         this.nome = nome;
         this.nascimento = nascimento;
@@ -45,6 +52,8 @@ public class UsersDTO {
         this.senha = senha;
         this.cpf = cpf;
         this.ativo = ativo;
+        this.modos = modos;
+        this.tipo = tipo;
 
     }
 
