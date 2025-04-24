@@ -27,7 +27,9 @@ public class UsersService {
                     usersDTO.getCpf(),
                     usersDTO.getAtivo(),
                     usersDTO.getModos(),
-                    usersDTO.getTipo()
+                    usersDTO.getTipo(),
+                    usersDTO.getUsername(),
+                    usersDTO.getEmpresa()
 
             );
             Users usuarioCriado = usersRepository.save(usuario);
@@ -41,7 +43,9 @@ public class UsersService {
                     usuarioCriado.getCpf(),
                     usuarioCriado.getAtivo(),
                     usuarioCriado.getModos(),
-                    usuarioCriado.getTipo()
+                    usuarioCriado.getTipo(),
+                    usuarioCriado.getUsername(),
+                    usuarioCriado.getEmpresa()
 
             );
         } catch (DataIntegrityViolationException e) {
