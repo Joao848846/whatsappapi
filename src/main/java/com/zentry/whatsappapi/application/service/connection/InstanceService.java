@@ -12,7 +12,7 @@ import java.util.Map;
 public class InstanceService {
 
     private final RestTemplate restTemplate;
-    private final String API_URL = "http://localhost:8080/";
+    private final String API_URL = "http://evolution-api:8080/";
     private final String API_KEY = "12345";
 
     public InstanceService(RestTemplate restTemplate) {
