@@ -34,22 +34,32 @@ public class CsvService {
 
             while ((linha = reader.readNext()) != null) {
                 if (primeiraLinha) {
-                    primeiraLinha = false; // pula o cabeçalho
+                    primeiraLinha = false;
                     continue;
                 }
 
                 scheduling agendamento = new scheduling();
                 agendamento.setNome(linha[0]);
                 agendamento.setTelefone(linha[1]);
-                agendamento.setTipo_contrato(linha[2]);
-                agendamento.setData_contrato(String.valueOf(LocalDate.parse(linha[3], dateFormatter)));
-                agendamento.setStatus_pagamento(linha[4]);
-                agendamento.setValor_mensalidade(linha[5]);
+                agendamento.setDocumento(linha[2]);
+                agendamento.setTipo_contrato(linha[3]);
+                agendamento.setData_contrato(String.valueOf(LocalDate.parse(linha[4], dateFormatter)));
+                agendamento.setStatus_pagamento(linha[5]);
+                agendamento.setValor_mensalidade(linha[6]);
 
+                // Verifica se já existe um agendamento com este documento
+                scheduling existente = agendamentoRepository.findByDocumento(agendamento.getDocumento());
 
-                agendamentos.add(agendamento);
-                // Salva o agendamento no banco de dados
-                agendamentoRepository.save(agendamento);
+                if (existente == null) {
+                    // Se não existe, salva o novo agendamento e adiciona à lista
+                    agendamentos.add(agendamento);
+                    agendamentoRepository.save(agendamento);
+
+                } else {
+                    // Se já existe, loga a duplicidade (ou outra ação que você preferir)
+                    System.out.println("Duplicidade encontrada para o documento: " + agendamento.getDocumento());
+                    // Por enquanto, não adicionamos à lista 'agendamentos'
+                }
             }
 
         } catch (Exception e) {
