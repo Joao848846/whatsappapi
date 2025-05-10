@@ -25,6 +25,7 @@ public class CsvController  {
     public ResponseEntity<?> uploadCSV(@RequestParam("file") MultipartFile file) {
         try {
             List<scheduling> agendamentos = csvService.LerAgendamentos(file.getInputStream());
+            System.out.println("Agendamentos lidos: " + agendamentos.size());
             return ResponseEntity.ok(agendamentos); // ou salvar no banco, ou retornar OK simples
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro ao processar CSV: " + e.getMessage());

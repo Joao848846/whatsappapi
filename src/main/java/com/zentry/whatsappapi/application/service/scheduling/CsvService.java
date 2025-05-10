@@ -1,6 +1,7 @@
 package com.zentry.whatsappapi.application.service.scheduling;
 
 import com.opencsv.CSVReader;
+import com.zentry.whatsappapi.infrastructure.Repository.schedulingRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStreamReader;
@@ -15,11 +16,17 @@ import com.zentry.whatsappapi.domain.model.scheduling.scheduling;
 @Service
 public class CsvService {
 
+    private final schedulingRepository agendamentoRepository;
+
+    public CsvService(schedulingRepository agendamentoRepository) {
+        this.agendamentoRepository = agendamentoRepository;
+    }
+
     public List<scheduling> LerAgendamentos(InputStream csvInputStream) {
 
         List<scheduling> agendamentos = new ArrayList<>();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
 
         try (CSVReader reader = new CSVReader(new InputStreamReader(csvInputStream))) {
             String[] linha;
@@ -32,13 +39,17 @@ public class CsvService {
                 }
 
                 scheduling agendamento = new scheduling();
-                agendamento.setNomeCliente(linha[0]);
-                agendamento.setTelefoneCliente(linha[1]);
-                agendamento.setDataConsulta(String.valueOf(LocalDate.parse(linha[2], dateFormatter)));
-                agendamento.setHoraConsulta(String.valueOf(LocalTime.parse(linha[3], timeFormatter)));
-                agendamento.setDoutor(linha[4]);
+                agendamento.setNome(linha[0]);
+                agendamento.setTelefone(linha[1]);
+                agendamento.setTipo_contrato(linha[2]);
+                agendamento.setData_contrato(String.valueOf(LocalDate.parse(linha[3], dateFormatter)));
+                agendamento.setStatus_pagamento(linha[4]);
+                agendamento.setValor_mensalidade(linha[5]);
+
 
                 agendamentos.add(agendamento);
+                // Salva o agendamento no banco de dados
+                agendamentoRepository.save(agendamento);
             }
 
         } catch (Exception e) {
