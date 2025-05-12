@@ -2,6 +2,10 @@ package com.zentry.whatsappapi.domain.model.scheduling;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Document(collection = "scheduling")
 public class scheduling {
@@ -16,9 +20,11 @@ public class scheduling {
     private String status_pagamento;
     private String valor_mensalidade;
     private Boolean lembreteEnviado;
+    private LocalDateTime dataUltimoLembreteEnviado;
 
 
-    public scheduling( String id ,String nome, String telefone, String documento, String tipo_contrato, String data_contrato , String status_pagamento, String valor_mensalidade, Boolean lembreteEnviado) {
+
+    public scheduling( String id ,String nome, String telefone, String documento, String tipo_contrato, String data_contrato , String status_pagamento, String valor_mensalidade, Boolean lembreteEnviado, LocalDateTime dataUltimoLembreteEnviado) {
         this.nome = nome;
         this.telefone = telefone;
         this.documento = documento;
@@ -27,6 +33,7 @@ public class scheduling {
         this.status_pagamento = status_pagamento;
         this.valor_mensalidade = valor_mensalidade;
         this.lembreteEnviado = lembreteEnviado;
+        this.dataUltimoLembreteEnviado = dataUltimoLembreteEnviado;
     }
 
 
@@ -103,5 +110,13 @@ public class scheduling {
 
     public void setLembreteEnviado(Boolean lembreteEnviado) {
         this.lembreteEnviado = lembreteEnviado;
+    }
+
+    public LocalDateTime getDataUltimoLembreteEnviado() {
+        return dataUltimoLembreteEnviado;
+    }
+
+    public void setDataUltimoLembreteEnviado(LocalDateTime dataUltimoLembreteEnviado) {
+        this.dataUltimoLembreteEnviado = dataUltimoLembreteEnviado;
     }
 }

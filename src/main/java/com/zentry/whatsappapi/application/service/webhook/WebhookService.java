@@ -124,6 +124,7 @@ public class WebhookService {
                     if (agendamento != null) {
                         System.out.println("Agendamento ENCONTRADO (ANTES da atualização - ID): " + agendamento.getId()  + agendamento);
                         agendamento.setLembreteEnviado(true);
+                        agendamento.setDataUltimoLembreteEnviado(messageToSave.getDateTime());
                         schedulingRepository.save(agendamento);
                         System.out.println("Status do lembrete atualizado para enviado para o telefone: " + telefone + " (DEPOIS da atualização): " + agendamento.getId() + agendamento);
                     } else {

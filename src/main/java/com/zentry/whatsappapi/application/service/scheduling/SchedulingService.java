@@ -27,7 +27,7 @@ public class SchedulingService {
         LocalDate hoje = LocalDate.now();
 
         for (scheduling contato : agendamentos) {
-            System.out.println("Worker verificando agendamento ID: " + contato.getId() + ", Lembrete Enviado: " + contato.getLembreteEnviado() + ", Status Pagamento: " + contato.getStatus_pagamento()); // ADICIONE ESTE LOG
+            System.out.println("Worker verificando agendamento ID: " + contato.getId() + ", Lembrete Enviado: " + contato.getLembreteEnviado() + ", Status Pagamento: " + contato.getStatus_pagamento()  +  "contato" + contato.getTelefone());
 
 
             if (!contato.getStatus_pagamento().equalsIgnoreCase("pendente") &&
@@ -41,13 +41,32 @@ public class SchedulingService {
             LocalDate dataContrato = LocalDate.parse(contato.getData_contrato());
             int diaVencimento = dataContrato.getDayOfMonth();
 
-            if (hoje.getDayOfMonth() == diaVencimento && (contato.getLembreteEnviado() == null || !contato.getLembreteEnviado())) {
-                apiMessageService.enviarMensagem(contato);
-
-                try {
-                    Thread.sleep(10000); // espera 3 segundos entre cada envio
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+            if (hoje.getDayOfMonth() == diaVencimento || hoje.isEqual(dataContrato.minusDays(3))) {
+                boolean podeEnviarLembrete = false;
+                java.time.YearMonth mesAnoAtual = java.time.YearMonth.now();
+                System.out.println("Dia de vencimento encontrado para o agendamento ID: " + contato.getId() +
+                        ", dataUltimoLembreteEnviado: " + contato.getDataUltimoLembreteEnviado() +
+                        ", lembreteEnviado: " + contato.getLembreteEnviado());
+                if (contato.getDataUltimoLembreteEnviado() == null || !contato.getLembreteEnviado()) {
+                    System.out.println("Condição para enviar lembrete ATIVADA (primeiro envio ou lembreteEnviado false) para ID: " + contato.getId());
+                    podeEnviarLembrete = true;
+                    // Se enviarmos agora, precisamos garantir que o webhook setará lembreteEnviado para true
+                } else {
+                    java.time.YearMonth mesAnoUltimoEnvio = java.time.YearMonth.from(contato.getDataUltimoLembreteEnviado());
+                    if (!mesAnoUltimoEnvio.equals(mesAnoAtual) && contato.getLembreteEnviado()) {
+                        System.out.println("Condição para enviar lembrete ATIVADA (mês diferente e lembreteEnviado true) para ID: " + contato.getId());
+                        podeEnviarLembrete = true;
+                        // Se enviarmos agora, precisamos garantir que o webhook atualizará a data e manterá lembreteEnviado como true
+                    }
+                }
+                if (podeEnviarLembrete) {
+                    apiMessageService.enviarMensagem(contato);
+                    // O webhook irá atualizar o dataUltimoLembreteEnviado e lembreteEnviado
+                    try {
+                        Thread.sleep(10000); // espera 10 segundos entre cada envio
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
             }
         }

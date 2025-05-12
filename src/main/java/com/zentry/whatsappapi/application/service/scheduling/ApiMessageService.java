@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders;
 import com.zentry.whatsappapi.domain.model.scheduling.scheduling;
 
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,15 +48,20 @@ public class ApiMessageService {
 
     private String gerarMensagemPersonalizada(scheduling contato) {
         String status = contato.getStatus_pagamento();
+        LocalDate dataContrato = LocalDate.parse(contato.getData_contrato());
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("dd/MM"); // Formato para extrair apenas o dia
+        String diaDoContrato = dataContrato.format(dayFormatter);
+
         String modelo = switch (status.toLowerCase()) {
-            case "pendente" -> "Olá {{nome}}, sua mensalidade vence hoje. Por favor, regularize.";
-            case "atrasado" -> "Olá {{nome}}, sua mensalidade está atrasada desde {{data_contrato}}.";
-            default -> "Olá {{nome}} sua mensalidade se encontra paga.";
+            case "pendente" -> "Olá {{nome}}, sua mensalidade do valor está pendente desde o dia " + diaDoContrato + ". Por favor, regularize.";
+            case "atrasado" -> "Olá {{nome}}, sua mensalidade está atrasada desde o dia " + diaDoContrato + ".";
+            default -> "Olá {{nome}}, sua mensalidade se encontra paga.";
         };
 
         return modelo
                 .replace("{{nome}}", contato.getNome())
-                .replace("{{data_contrato}}", contato.getData_contrato());
+                // Removi a substituição da data completa aqui, pois já inserimos o dia diretamente no modelo
+                ;
     }
 }
 

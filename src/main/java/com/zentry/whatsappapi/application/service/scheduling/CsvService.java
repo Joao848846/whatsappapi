@@ -47,6 +47,7 @@ public class CsvService {
                 agendamento.setStatus_pagamento(linha[5]);
                 agendamento.setValor_mensalidade(linha[6]);
                 agendamento.setLembreteEnviado(false);
+                agendamento.setDataUltimoLembreteEnviado(null);
 
                 // Verifica se já existe um agendamento com este documento
                 scheduling existente = agendamentoRepository.findByDocumento(agendamento.getDocumento());
@@ -54,12 +55,15 @@ public class CsvService {
                 if (existente == null) {
                     // Se não existe, salva o novo agendamento e adiciona à lista
                     agendamentos.add(agendamento);
+                    System.out.println("Agendamento adicionado: " + agendamento.getDocumento() + "UltimoLembrete: " + agendamento.getDataUltimoLembreteEnviado());
                     agendamentoRepository.save(agendamento);
+                    System.out.println("Agendamento salvo: " + agendamento.getDocumento() + "UltimoLembrete: " + agendamento.getDataUltimoLembreteEnviado());
 
                 } else {
                     // Se já existe, loga a duplicidade (ou outra ação que você preferir)
                     System.out.println("Duplicidade encontrada para o documento: " + agendamento.getDocumento());
                     // Por enquanto, não adicionamos à lista 'agendamentos'
+
                 }
             }
 
