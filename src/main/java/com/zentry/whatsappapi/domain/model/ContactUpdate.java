@@ -52,7 +52,7 @@ public class ContactUpdate {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o) { //
         if (o == null || getClass() != o.getClass()) return false;
         ContactUpdate that = (ContactUpdate) o;
         return Objects.equals(profilePicUrl, that.profilePicUrl);

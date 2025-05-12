@@ -6,4 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface schedulingRepository extends  MongoRepository<scheduling, String> {
 
     scheduling findByDocumento(String documento);
+
+    scheduling findByTelefone(String telefone);
 }

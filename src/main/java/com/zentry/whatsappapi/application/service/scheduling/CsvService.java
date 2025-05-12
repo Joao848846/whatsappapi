@@ -46,6 +46,7 @@ public class CsvService {
                 agendamento.setData_contrato(String.valueOf(LocalDate.parse(linha[4], dateFormatter)));
                 agendamento.setStatus_pagamento(linha[5]);
                 agendamento.setValor_mensalidade(linha[6]);
+                agendamento.setLembreteEnviado(false);
 
                 // Verifica se já existe um agendamento com este documento
                 scheduling existente = agendamentoRepository.findByDocumento(agendamento.getDocumento());

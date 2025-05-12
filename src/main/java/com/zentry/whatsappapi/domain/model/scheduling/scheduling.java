@@ -6,26 +6,40 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "scheduling")
 public class scheduling {
 
+    @Id
+    private String id;
     private String nome;
     private String telefone;
+    private String documento;
     private String tipo_contrato;
     private String data_contrato;
     private String status_pagamento;
     private String valor_mensalidade;
+    private Boolean lembreteEnviado;
 
 
-    public scheduling(String nome, String telefone, String tipo_contrato, String data_contrato , String status_pagamento, String valor_mensalidade) {
+    public scheduling( String id ,String nome, String telefone, String documento, String tipo_contrato, String data_contrato , String status_pagamento, String valor_mensalidade, Boolean lembreteEnviado) {
         this.nome = nome;
         this.telefone = telefone;
+        this.documento = documento;
         this.tipo_contrato = tipo_contrato;
         this.data_contrato = data_contrato;
         this.status_pagamento = status_pagamento;
         this.valor_mensalidade = valor_mensalidade;
+        this.lembreteEnviado = lembreteEnviado;
     }
 
 
     public scheduling() {
 
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -42,6 +56,13 @@ public class scheduling {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+    public void setDocumento(String documento) {
+        this.documento = documento;
     }
 
     public String getTipo_contrato() {
@@ -74,5 +95,13 @@ public class scheduling {
 
     public void setValor_mensalidade(String valor_mensalidade) {
         this.valor_mensalidade = valor_mensalidade;
+    }
+
+    public Boolean getLembreteEnviado() {
+        return lembreteEnviado;
+    }
+
+    public void setLembreteEnviado(Boolean lembreteEnviado) {
+        this.lembreteEnviado = lembreteEnviado;
     }
 }

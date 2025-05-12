@@ -49,7 +49,7 @@ public class ApiMessageService {
         String modelo = switch (status.toLowerCase()) {
             case "pendente" -> "Olá {{nome}}, sua mensalidade vence hoje. Por favor, regularize.";
             case "atrasado" -> "Olá {{nome}}, sua mensalidade está atrasada desde {{data_contrato}}.";
-            default -> "Olá {{nome}}.";
+            default -> "Olá {{nome}} sua mensalidade se encontra paga.";
         };
 
         return modelo
