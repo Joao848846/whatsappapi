@@ -2,9 +2,7 @@ package com.zentry.whatsappapi.domain.model.scheduling;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Document(collection = "scheduling")
@@ -17,28 +15,27 @@ public class scheduling {
     private String documento;
     private String tipo_contrato;
     private String data_contrato;
-    private String status_pagamento;
+    private String statusPagamento;
     private String valor_mensalidade;
     private Boolean lembreteEnviado;
     private LocalDateTime dataUltimoLembreteEnviado;
 
 
 
-    public scheduling( String id ,String nome, String telefone, String documento, String tipo_contrato, String data_contrato , String status_pagamento, String valor_mensalidade, Boolean lembreteEnviado, LocalDateTime dataUltimoLembreteEnviado) {
+    public scheduling(String id , String nome, String telefone, String documento, String tipo_contrato, String data_contrato , String statusPagamento, String valor_mensalidade, Boolean lembreteEnviado, LocalDateTime dataUltimoLembreteEnviado) {
         this.nome = nome;
         this.telefone = telefone;
         this.documento = documento;
         this.tipo_contrato = tipo_contrato;
         this.data_contrato = data_contrato;
-        this.status_pagamento = status_pagamento;
+        this.statusPagamento = statusPagamento;
         this.valor_mensalidade = valor_mensalidade;
         this.lembreteEnviado = lembreteEnviado;
         this.dataUltimoLembreteEnviado = dataUltimoLembreteEnviado;
     }
 
-
     public scheduling() {
-
+        // Construtor padrão
     }
 
     public String getId() {
@@ -88,12 +85,12 @@ public class scheduling {
         this.data_contrato = data_contrato;
     }
 
-    public String getStatus_pagamento() {
-        return status_pagamento;
+   public String getStatusPagamento() {
+        return statusPagamento;
     }
 
-    public void setStatus_pagamento(String status_pagamento) {
-        this.status_pagamento = status_pagamento;
+    public void setStatusPagamento(String statusPagamento) {
+        this.statusPagamento = statusPagamento;
     }
 
     public String getValor_mensalidade() {

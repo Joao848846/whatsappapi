@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 
 import com.zentry.whatsappapi.domain.model.scheduling.scheduling;
 
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -24,29 +23,34 @@ public class ApiMessageService {
         this.restTemplate = new RestTemplate();
     }
 
-    public void enviarMensagem(scheduling agendamentos) {
-        String mensagem = gerarMensagemPersonalizada(agendamentos);
-
+    // NOVO MÉTODO PARA ENVIAR COM TELEFONE E TEXTO
+    public void enviarMensagem(String telefone, String mensagemTexto) {
         Map<String, String> body = new HashMap<>();
-        body.put("number", agendamentos.getTelefone());
-        body.put("text", mensagem);
+        body.put("number", telefone);
+        body.put("text", mensagemTexto);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
 
-        String endpoint = "http://localhost:3000/api/v1/message/sendText/Joao"; // Substitua aqui
+        String endpoint = "http://localhost:3000/api/v1/message/sendText/Joao"; // SUBSTITUA AQUI
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(endpoint, request, String.class);
-            System.out.println("Mensagem enviada para " + agendamentos.getTelefone() + ": " + response.getStatusCode());
+            System.out.println("Mensagem enviada para " + telefone + ": " + response.getStatusCode());
         } catch (Exception e) {
-            System.err.println("Erro ao enviar mensagem para " + agendamentos.getNome() + ": " + e.getMessage());
+            System.err.println("Erro ao enviar mensagem para " + telefone + ": " + e.getMessage());
         }
     }
 
-    private String gerarMensagemPersonalizada(scheduling contato) {
+    // MÉTODO EXISTENTE QUE RECEBE 'scheduling' E CHAMA O NOVO MÉTODO
+    public void enviarMensagem(scheduling agendamentos) {
+        String mensagem = gerarMensagemPersonalizada(agendamentos);
+        enviarMensagem(agendamentos.getTelefone(), mensagem); // CHAMA O NOVO MÉTODO
+    }
+
+    public String gerarMensagemPersonalizada(scheduling contato) {
         String status = contato.getStatusPagamento();
         LocalDate dataContrato = LocalDate.parse(contato.getData_contrato());
         DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("dd/MM"); // Formato para extrair apenas o dia
@@ -59,9 +63,6 @@ public class ApiMessageService {
         };
 
         return modelo
-                .replace("{{nome}}", contato.getNome())
-                // Removi a substituição da data completa aqui, pois já inserimos o dia diretamente no modelo
-                ;
+                .replace("{{nome}}", contato.getNome());
     }
 }
-

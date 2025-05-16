@@ -2,11 +2,14 @@ package com.zentry.whatsappapi.application.service.scheduling;
 
 import com.zentry.whatsappapi.application.service.scheduling.ApiMessageService;
 import com.zentry.whatsappapi.infrastructure.Repository.schedulingRepository;
+import com.zentry.whatsappapi.infrastructure.Repository.MensagemNaFilaRepository;
 import com.zentry.whatsappapi.domain.model.scheduling.scheduling;
+import com.zentry.whatsappapi.domain.model.scheduling.MensagemNaFila;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,14 +17,16 @@ public class SchedulingService {
 
     private final schedulingRepository agendamentoRepository;
     private final ApiMessageService apiMessageService;
+    private final MensagemNaFilaRepository mensagemNaFilaRepository;
 
     public SchedulingService( schedulingRepository agendamentoRepository,
-                             ApiMessageService apiMessageService) {
+                             ApiMessageService apiMessageService, MensagemNaFilaRepository mensagemNaFilaRepository) {
         this.agendamentoRepository = agendamentoRepository;
         this.apiMessageService = apiMessageService;
+        this.mensagemNaFilaRepository = mensagemNaFilaRepository;
     }
 
-    @Scheduled(fixedDelay = 120000) // a cada 15 minutos
+    @Scheduled(fixedDelay = 120000) // 2 minutos
     public void verificarContratosEVencimentos() {
         List<scheduling> agendamentos = agendamentoRepository.findAll();
         LocalDate hoje = LocalDate.now();
@@ -60,12 +65,27 @@ public class SchedulingService {
                     }
                 }
                 if (podeEnviarLembrete) {
-                    apiMessageService.enviarMensagem(contato);
-                    // O webhook irá atualizar o dataUltimoLembreteEnviado e lembreteEnviado
-                    try {
-                        Thread.sleep(10000); // espera 10 segundos entre cada envio
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+
+                    System.out.println("Enviando lembrete para o agendamento ID: " + contato.getId() + ", telefone: " + contato.getTelefone());
+                    MensagemNaFila mensagemPendenteExistente = mensagemNaFilaRepository.findBySchedulingIdAndStatusEnvio(contato.getId(), "PENDENTE");
+                    System.out.println("Mensagem PENDENTE existente: " + mensagemPendenteExistente);
+
+                    if (mensagemPendenteExistente == null) {
+                        // *** LÓGICA DA FILA ***
+                        String mensagemParaEnviar = apiMessageService.gerarMensagemPersonalizada(contato);
+                        LocalDateTime horarioAgendamento = LocalDateTime.now().plusMinutes(3); // 3 minutos no futuro
+
+                        MensagemNaFila mensagemNaFila = new MensagemNaFila(
+                                contato.getId(),
+                                contato.getTelefone(),
+                                mensagemParaEnviar,
+                                horarioAgendamento
+                        );
+                        mensagemNaFila.setStatusEnvio("PENDENTE"); // Garanta que o status seja "PENDENTE" na criação
+                        mensagemNaFilaRepository.save(mensagemNaFila);
+                        System.out.println("Nova mensagem ENFILEIRADA para o scheduling ID: " + contato.getId());
+                    } else {
+                        System.out.println("Mensagem PENDENTE já existe na fila para o scheduling ID: " + contato.getId() + ". Não enfileirando novamente.");
                     }
                 }
             }

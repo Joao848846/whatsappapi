@@ -4,15 +4,19 @@ import com.zentry.whatsappapi.adapter.in.controller.webhook.dto.WebhookPayloadDT
 import com.zentry.whatsappapi.adapter.in.websocket.MessageWebSocketController;
 import com.zentry.whatsappapi.domain.model.ContactUpdate;
 import com.zentry.whatsappapi.domain.model.MessageEvent;
+import com.zentry.whatsappapi.domain.model.scheduling.MensagemNaFila;
 import com.zentry.whatsappapi.domain.model.scheduling.scheduling;
 import com.zentry.whatsappapi.infrastructure.Repository.ContactUpdateRepository;
 import com.zentry.whatsappapi.infrastructure.Repository.MessageEventRepository;
 import com.zentry.whatsappapi.infrastructure.Repository.schedulingRepository;
+import com.zentry.whatsappapi.infrastructure.Repository.MensagemNaFilaRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,12 +26,14 @@ public class WebhookService {
     private final ContactUpdateRepository contactUpdateRepository;
     private final MessageWebSocketController messageWebSocketController;
     private final schedulingRepository schedulingRepository;
+    private final MensagemNaFilaRepository mensagemNaFilaRepository;
 
-    public WebhookService(MessageEventRepository messageEventRepository, ContactUpdateRepository contactUpdateRepository, MessageWebSocketController messageWebSocketController, schedulingRepository schedulingRepository) {
+    public WebhookService(MessageEventRepository messageEventRepository, ContactUpdateRepository contactUpdateRepository, MessageWebSocketController messageWebSocketController, schedulingRepository schedulingRepository, MensagemNaFilaRepository mensagemNaFilaRepository) {
         this.messageEventRepository = messageEventRepository;
         this.contactUpdateRepository = contactUpdateRepository;
         this.messageWebSocketController = messageWebSocketController;
         this.schedulingRepository = schedulingRepository;
+        this.mensagemNaFilaRepository = mensagemNaFilaRepository;
     }
 
     public void processWebhook(WebhookPayloadDTO payload) {
@@ -115,30 +121,68 @@ public class WebhookService {
                 messageWebSocketController.broadcastMessage(messageToSave);
                 System.out.println("Mensagem SALVA (tentativa).");
 
-                // Lógica para atualizar o Scheduling para o evento 'send.message'
+                // Lógica para NÃO atualizar o Scheduling para o evento 'send.message'
                 if ("send.message".equals(eventType) && remoteJid != null) {
                     String telefone = remoteJid.replace("@s.whatsapp.net", "");
-                    System.out.println("Buscando agendamento para o telefone: " + telefone);
+                    System.out.println("Buscando agendamento para o telefone (send.message): " + telefone);
                     scheduling agendamento = schedulingRepository.findByTelefone(telefone);
 
                     if (agendamento != null) {
-                        System.out.println("Agendamento ENCONTRADO (ANTES da atualização - ID): " + agendamento.getId()  + agendamento);
-                        agendamento.setLembreteEnviado(true);
-                        agendamento.setDataUltimoLembreteEnviado(messageToSave.getDateTime());
-                        schedulingRepository.save(agendamento);
-                        System.out.println("Status do lembrete atualizado para enviado para o telefone: " + telefone + " (DEPOIS da atualização): " + agendamento.getId() + agendamento);
+                        System.out.println("Agendamento ENCONTRADO (send.message - ID): " + agendamento.getId());
+                        // *** NÃO ATUALIZAR O SCHEDULING AQUI ***
+                        System.out.println("Status do lembrete NÃO atualizado no send.message para o telefone: " + telefone);
                     } else {
-                        System.out.println("Agendamento NÃO ENCONTRADO para o telefone: " + telefone);
-                        scheduling novoAgendamento = new scheduling();
-                        novoAgendamento.setTelefone(telefone);
-                        novoAgendamento.setLembreteEnviado(true);
-                        schedulingRepository.save(novoAgendamento);
-                        System.out.println("NOVO agendamento criado (isso NÃO deveria acontecer normalmente): " + novoAgendamento);
+                        System.out.println("Agendamento NÃO ENCONTRADO para o telefone (send.message): " + telefone);
                     }
                 }
-
             } else {
                 System.out.println("Dados incompletos para a mensagem.");
+            }
+        } else if ("messages.update".equals(eventType)) {
+            System.out.println("Evento messages.update detectado.");
+            Map<String, Object> updateData = payload.getDataAsMap(); // Use getDataAsMap()
+
+            if (updateData != null && updateData.containsKey("keyId")) {
+                String messageIdWebhook = (String) updateData.get("keyId"); // Use keyId do payload
+                String remoteJid = (String) updateData.get("remoteJid");
+                String statusWebhook = (String) updateData.get("status");
+
+                System.out.println("Atualização para a mensagem ID (keyId): " + messageIdWebhook + ", remoteJid: " + remoteJid + ", status: " + statusWebhook);
+
+                if ("DELIVERY_ACK".equals(statusWebhook)) {
+                    System.out.println("Mensagem ENTREGUE: " + messageIdWebhook);
+                    if (remoteJid != null && remoteJid.endsWith("@s.whatsapp.net")) {
+                        String telefone = remoteJid.replace("@s.whatsapp.net", "");
+                        MensagemNaFila mensagemNaFila = mensagemNaFilaRepository.findTopByTelefoneDestinoAndStatusEnvioOrderByDataEnvioRealizadoDesc(telefone, "ENVIADO");
+
+                        if (mensagemNaFila != null) {
+                            mensagemNaFila.setStatusEnvio("ENTREGUE");
+                            mensagemNaFilaRepository.save(mensagemNaFila);
+                            System.out.println("Status da MensagemNaFila atualizado para ENTREGUE: " + mensagemNaFila.getId());
+
+                            scheduling agendamento = schedulingRepository.findByTelefone(telefone);
+                            if (agendamento != null) {
+                                agendamento.setLembreteEnviado(true);
+                                agendamento.setDataUltimoLembreteEnviado(LocalDateTime.now());
+                                schedulingRepository.save(agendamento);
+                                System.out.println("Status do lembrete atualizado para enviado (via entrega) para o telefone: " + telefone);
+                            }
+                        }
+                    }
+                } else if ("DELIVERY_ERROR".equals(statusWebhook)) {
+                    System.out.println("Falha na entrega da mensagem: " + messageIdWebhook);
+                    if (remoteJid != null && remoteJid.endsWith("@s.whatsapp.net")) {
+                        String telefone = remoteJid.replace("@s.whatsapp.net", "");
+                        MensagemNaFila mensagemNaFila = mensagemNaFilaRepository.findTopByTelefoneDestinoAndStatusEnvioOrderByDataEnvioRealizadoDesc(telefone, "ENVIADO");
+                        if (mensagemNaFila != null) {
+                            mensagemNaFila.setStatusEnvio("FALHA");
+                            mensagemNaFilaRepository.save(mensagemNaFila);
+                            System.out.println("Status da MensagemNaFila atualizado para FALHA: " + mensagemNaFila.getId());
+                        }
+                    }
+                }
+            } else {
+                System.out.println("Dados incompletos para messages.update.");
             }
         } else {
             System.out.println("Evento não tratado: " + eventType);
