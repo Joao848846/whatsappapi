@@ -47,7 +47,7 @@ public class ApiMessageService {
     }
 
     private String gerarMensagemPersonalizada(scheduling contato) {
-        String status = contato.getStatus_pagamento();
+        String status = contato.getStatusPagamento();
         LocalDate dataContrato = LocalDate.parse(contato.getData_contrato());
         DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("dd/MM"); // Formato para extrair apenas o dia
         String diaDoContrato = dataContrato.format(dayFormatter);
