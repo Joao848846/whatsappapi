@@ -27,11 +27,11 @@ public class SchedulingService {
         LocalDate hoje = LocalDate.now();
 
         for (scheduling contato : agendamentos) {
-            System.out.println("Worker verificando agendamento ID: " + contato.getId() + ", Lembrete Enviado: " + contato.getLembreteEnviado() + ", Status Pagamento: " + contato.getStatus_pagamento()  +  "contato" + contato.getTelefone());
+            System.out.println("Worker verificando agendamento ID: " + contato.getId() + ", Lembrete Enviado: " + contato.getLembreteEnviado() + ", Status Pagamento: " + contato.getStatusPagamento()  +  "contato" + contato.getTelefone());
 
 
-            if (!contato.getStatus_pagamento().equalsIgnoreCase("pendente") &&
-                    !contato.getStatus_pagamento().equalsIgnoreCase("atrasado") &&
+            if (!contato.getStatusPagamento().equalsIgnoreCase("pendente") &&
+                    !contato.getStatusPagamento().equalsIgnoreCase("atrasado") &&
                     contato.getLembreteEnviado() != null && contato.getLembreteEnviado()) {
                 System.out.println("Pulando agendamento pois já foi pago e/ou lembrete enviado.");
                 continue; // pula se já estiver pago
@@ -41,7 +41,7 @@ public class SchedulingService {
             LocalDate dataContrato = LocalDate.parse(contato.getData_contrato());
             int diaVencimento = dataContrato.getDayOfMonth();
 
-            if (hoje.getDayOfMonth() == diaVencimento || hoje.isEqual(dataContrato.minusDays(3))) {
+            if (hoje.getDayOfMonth() == diaVencimento || hoje.isEqual(dataContrato.minusDays(3)) || hoje.isEqual(dataContrato.plusDays(2))) {
                 boolean podeEnviarLembrete = false;
                 java.time.YearMonth mesAnoAtual = java.time.YearMonth.now();
                 System.out.println("Dia de vencimento encontrado para o agendamento ID: " + contato.getId() +
@@ -56,7 +56,7 @@ public class SchedulingService {
                     if (!mesAnoUltimoEnvio.equals(mesAnoAtual) && contato.getLembreteEnviado()) {
                         System.out.println("Condição para enviar lembrete ATIVADA (mês diferente e lembreteEnviado true) para ID: " + contato.getId());
                         podeEnviarLembrete = true;
-                        // Se enviarmos agora, precisamos garantir que o webhook atualizará a data e manterá lembreteEnviado como true
+                        // Se enviarmos agora,  garantir que o webhook atualizará a data e manterá lembreteEnviado como true
                     }
                 }
                 if (podeEnviarLembrete) {
