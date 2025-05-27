@@ -1,6 +1,8 @@
 package com.zentry.whatsappapi.adapter.in.controller.companies.dto;
 
 import com.zentry.whatsappapi.domain.model.companies.Empresa;
+import org.hibernate.mapping.List;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 // DTO (Data Transfer Object) que representa os dados trocados entre front e back
 public class EmpresaDTO {
