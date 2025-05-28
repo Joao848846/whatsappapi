@@ -6,6 +6,8 @@ import com.zentry.whatsappapi.infrastructure.Repository.EmpresaRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmpresaService {
 
@@ -55,5 +57,10 @@ public class EmpresaService {
             // Se ocorrer algum erro ao salvar, como violação de chave única, lançar uma exceção
             throw new RuntimeException("Erro ao salvar empresa. Verifique se os dados estão corretos.");
         }
+    }
+
+    public List<Empresa> ListarEmpresas() {
+        // Retorna todas as empresas do banco de dados
+        return empresaRepository.findAll();
     }
 }
