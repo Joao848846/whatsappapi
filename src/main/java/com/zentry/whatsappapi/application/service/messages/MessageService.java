@@ -20,8 +20,7 @@ public class MessageService {
 
 
 
-    public Map<String, Object> sendTextMessage(String number, String text, String instanceId)
-    {
+    public Map<String, Object> sendTextMessage(String number, String text, String instanceId) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Monta o payload
