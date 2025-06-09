@@ -94,7 +94,7 @@ public class Empresa {
         return estadoPagamento;
     }
 
-    public void setEstadoPagamento(Integer estadoPagamento) {
+   public void setEstadoPagamento(Integer estadoPagamento) {
         this.estadoPagamento = estadoPagamento;
     }
 
@@ -105,6 +105,4 @@ public class Empresa {
     public void setPlanoContratado(String planoContratado) {
         this.planoContratado = planoContratado;
     }
-
-    // Pode adicionar também métodos de equals e hashCode para garantir a comparação correta entre instâncias
 }
