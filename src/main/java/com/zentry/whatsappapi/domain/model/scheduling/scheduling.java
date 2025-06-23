@@ -1,15 +1,20 @@
 package com.zentry.whatsappapi.domain.model.scheduling;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @Document(collection = "scheduling")
 public class scheduling {
 
     @Id
     private String id;
+    private String empresaID;
     private String nome;
     private String telefone;
     private String documento;
@@ -22,7 +27,8 @@ public class scheduling {
 
 
 
-    public scheduling(String id , String nome, String telefone, String documento, String tipo_contrato, String data_contrato , String statusPagamento, String valor_mensalidade, Boolean lembreteEnviado, LocalDateTime dataUltimoLembreteEnviado) {
+    public scheduling(String id , String empresaID , String nome, String telefone, String documento, String tipo_contrato, String data_contrato , String statusPagamento, String valor_mensalidade, Boolean lembreteEnviado, LocalDateTime dataUltimoLembreteEnviado) {
+        this.empresaID = empresaID;
         this.nome = nome;
         this.telefone = telefone;
         this.documento = documento;
@@ -34,86 +40,6 @@ public class scheduling {
         this.dataUltimoLembreteEnviado = dataUltimoLembreteEnviado;
     }
 
-    public scheduling() {
-        // Construtor padrão
-    }
+    public scheduling() {}
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getDocumento() {
-        return documento;
-    }
-    public void setDocumento(String documento) {
-        this.documento = documento;
-    }
-
-    public String getTipo_contrato() {
-        return tipo_contrato;
-    }
-
-    public void setTipo_contrato(String tipo_contrato) {
-        this.tipo_contrato = tipo_contrato;
-    }
-
-    public String getData_contrato() {
-        return data_contrato;
-    }
-
-    public void setData_contrato(String data_contrato) {
-        this.data_contrato = data_contrato;
-    }
-
-   public String getStatusPagamento() {
-        return statusPagamento;
-    }
-
-    public void setStatusPagamento(String statusPagamento) {
-        this.statusPagamento = statusPagamento;
-    }
-
-    public String getValor_mensalidade() {
-        return valor_mensalidade;
-    }
-
-    public void setValor_mensalidade(String valor_mensalidade) {
-        this.valor_mensalidade = valor_mensalidade;
-    }
-
-    public Boolean getLembreteEnviado() {
-        return lembreteEnviado;
-    }
-
-    public void setLembreteEnviado(Boolean lembreteEnviado) {
-        this.lembreteEnviado = lembreteEnviado;
-    }
-
-    public LocalDateTime getDataUltimoLembreteEnviado() {
-        return dataUltimoLembreteEnviado;
-    }
-
-    public void setDataUltimoLembreteEnviado(LocalDateTime dataUltimoLembreteEnviado) {
-        this.dataUltimoLembreteEnviado = dataUltimoLembreteEnviado;
-    }
 }
