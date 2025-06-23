@@ -38,6 +38,18 @@ public class InstanceController {
         }
     }
 
+    @GetMapping(value = "/connect/{instanceId}/qrcode", produces = "image/png")
+    public ResponseEntity<byte[]> getQrcode(@PathVariable String instanceId) {
+        try {
+            byte[] image = instanceService.GetQrcode(instanceId);
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "inline; filename=\"qrcode.png\"")
+                    .body(image);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
     @DeleteMapping(value = "/delete/{instanceId}")
     public ResponseEntity<?> deleteInstance(@PathVariable String instanceId) {
         try {
