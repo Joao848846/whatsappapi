@@ -5,6 +5,7 @@ import com.zentry.whatsappapi.domain.model.companies.Empresa;
 import com.zentry.whatsappapi.infrastructure.Repository.EmpresaRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import com.zentry.whatsappapi.application.mapper.EmpresaMapper;
 
 import java.util.List;
 
@@ -12,34 +13,21 @@ import java.util.List;
 public class EmpresaService {
 
     private final EmpresaRepository empresaRepository;
+    private final EmpresaMapper empresaMapper;
 
-    public EmpresaService(EmpresaRepository empresaRepository) {
+    public EmpresaService(EmpresaRepository empresaRepository, EmpresaMapper empresaMapper) {
         this.empresaRepository = empresaRepository;
+        this.empresaMapper = empresaMapper;
     }
 
     public EmpresaDTO criarEmpresa(EmpresaDTO dto) {
-        Empresa empresa = new Empresa();
 
-        // ‘Log’ para verificar o valor recebido
-        System.out.println("Nome do responsável recebido: " + dto.getNomeResponsavel());
-
-        if (dto.getCpf() != null && !dto.getCpf().isEmpty()) {
-            empresa.setCpf(dto.getCpf());
-        }
-
-        if (dto.getCnpj() != null && !dto.getCnpj().isEmpty()) {
-            empresa.setCnpj(dto.getCnpj());
-        }
-
-        empresa.setNome(dto.getNome());
-        empresa.setNomeResponsavel(dto.getNomeResponsavel());
-        empresa.setEmailResponsavel(dto.getEmailResponsavel());
-        empresa.setEstadoPagamento(dto.getEstadoPagamento());
-        empresa.setPlanoContratado(dto.getPlanoContratado());
+        Empresa empresa = empresaMapper.toEmpresa(dto);
+        empresaMapper.toEmpresa(dto);
 
         try {
             Empresa salva = empresaRepository.save(empresa);
-            return new EmpresaDTO(salva);
+            return new EmpresaDTO();
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Erro ao salvar empresa. Verifique se os dados estão corretos.");
         }
