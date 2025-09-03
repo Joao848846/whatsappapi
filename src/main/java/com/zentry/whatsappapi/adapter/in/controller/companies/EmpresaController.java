@@ -1,11 +1,9 @@
 package com.zentry.whatsappapi.adapter.in.controller.companies;
 
-// Importa o DTO usado para transferência de dados da empresa
 import com.zentry.whatsappapi.adapter.in.controller.companies.dto.EmpresaDTO;
-// Importa o serviço que contém a lógica de criação de empresas
 import com.zentry.whatsappapi.application.service.companies.EmpresaService;
-
 import com.zentry.whatsappapi.domain.model.companies.Empresa;
+import com.zentry.whatsappapi.application.mapper.EmpresaMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +18,11 @@ import java.util.stream.Collectors;
 public class EmpresaController {
 
     private final EmpresaService empresaService;
+    private final EmpresaMapper empresaMapper;
 
-    // Injeção de dependência via construtor — prática recomendada, especialmente com @Service
-    public EmpresaController(EmpresaService empresaService) {
+    public EmpresaController(EmpresaService empresaService, EmpresaMapper empresaMapper) {
         this.empresaService = empresaService;
+        this.empresaMapper = empresaMapper;
     }
 
     // Endpoint POST empresa
@@ -39,9 +38,7 @@ public class EmpresaController {
     @GetMapping()
     public ResponseEntity<List<EmpresaDTO>> listarEmpresas() {
         List<Empresa> empresas = empresaService.ListarEmpresas();
-        List<EmpresaDTO> empresasDTO = empresas.stream()
-                .map(EmpresaDTO::new)
-                .collect(Collectors.toList());
+        List<EmpresaDTO> empresasDTO = empresaMapper.toEmpresaDTO(empresas);
         return ResponseEntity.ok(empresasDTO);
     }
 }
